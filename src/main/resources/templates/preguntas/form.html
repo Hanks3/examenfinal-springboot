@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es"
       th:replace="~{fragments/layout :: layout(titulo='Formulario de Pregunta', content=~{:: #pagina})}">
+<head>
+    <script>
+        function actualizarCamposTipo() {
+            const tipo = document.getElementById('tipo').value;
+            document.getElementById('campos-vf').style.display = tipo === 'V_F' ? 'block' : 'none';
+            document.getElementById('campos-seleccion-unica').style.display = tipo === 'SELECCION_UNICA' ? 'block' : 'none';
+            document.getElementById('campos-seleccion-multiple').style.display = tipo === 'SELECCION_MULTIPLE' ? 'block' : 'none';
+        }
+        function prepararListas() {
+            ['opciones-unica', 'opciones-multiple', 'respuestas-multiple'].forEach(id => {
+                const ta = document.getElementById(id);
+                const container = document.getElementById(id + '-hidden');
+                if (!ta) return;
+                container.innerHTML = '';
+                ta.value.split('\n').filter(l => l.trim()).forEach((line, i) => {
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden';
+                    inp.name = id === 'opciones-unica' || id === 'opciones-multiple' ? 'opciones' : 'respuestasCorrectas';
+                    inp.value = line.trim();
+                    container.appendChild(inp);
+                });
+            });
+        }
+    </script>
+</head>
 <body>
 <div id="pagina">
     <div class="row justify-content-center">
@@ -23,7 +48,8 @@
                 </div>
                 <div class="card-body-modern">
                     <form th:action="${preguntaDTO.id == null} ? @{/preguntas} : @{/preguntas/actualizar/{id}(id=${preguntaDTO.id})}"
-                          th:object="${preguntaDTO}" method="post" class="needs-validation">
+                          th:object="${preguntaDTO}" method="post" class="needs-validation"
+                          onsubmit="prepararListas()">
 
                         <div class="mb-4">
                             <label for="enunciado" class="form-label fw-semibold small text-muted">Enunciado</label>
@@ -36,7 +62,8 @@
                             <div class="col-md-6">
                                 <label for="tipo" class="form-label fw-semibold small text-muted">Tipo de pregunta</label>
                                 <select id="tipo" class="form-select form-control-modern" th:field="*{tipo}"
-                                        th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid'">
+                                        th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid'"
+                                        onchange="actualizarCamposTipo()">
                                     <option value="">Seleccione un tipo</option>
                                     <option value="V_F">Verdadero / Falso</option>
                                     <option value="SELECCION_UNICA">Selección Única</option>
@@ -55,12 +82,44 @@
                             </div>
                         </div>
 
+                        <div id="campos-vf" style="display:none" class="mb-4 p-3 rounded-3" style="background:var(--bg-card);border:1px solid var(--border);">
+                            <label class="form-label fw-semibold small text-muted">Opción correcta</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="opcionCorrecta" th:field="*{opcionCorrecta}">
+                                <label class="form-check-label" for="opcionCorrecta">Verdadero</label>
+                            </div>
+                        </div>
+
+                        <div id="campos-seleccion-unica" style="display:none" class="mb-4 p-3 rounded-3" style="background:var(--bg-card);border:1px solid var(--border);">
+                            <label for="opciones-unica" class="form-label fw-semibold small text-muted">Opciones (una por línea)</label>
+                            <textarea id="opciones-unica" class="form-control form-control-modern" rows="4"
+                                      placeholder="Madrid&#10;Paris&#10;Londres&#10;Berlin"
+                                      th:text="${#lists.isEmpty(preguntaDTO.opciones)} ? '' : #strings.listJoin(preguntaDTO.opciones, T(java.lang.System).lineSeparator())"></textarea>
+                            <div class="mt-3">
+                                <label for="respuestaCorrecta" class="form-label fw-semibold small text-muted">Respuesta correcta</label>
+                                <input type="text" id="respuestaCorrecta" class="form-control form-control-modern" th:field="*{respuestaCorrecta}" placeholder="Ej: Paris">
+                            </div>
+                            <div id="opciones-unica-hidden"></div>
+                        </div>
+
+                        <div id="campos-seleccion-multiple" style="display:none" class="mb-4 p-3 rounded-3" style="background:var(--bg-card);border:1px solid var(--border);">
+                            <label for="opciones-multiple" class="form-label fw-semibold small text-muted">Opciones (una por línea)</label>
+                            <textarea id="opciones-multiple" class="form-control form-control-modern" rows="4"
+                                      placeholder="Opcion 1&#10;Opcion 2&#10;Opcion 3"
+                                      th:text="${#lists.isEmpty(preguntaDTO.opciones)} ? '' : #strings.listJoin(preguntaDTO.opciones, T(java.lang.System).lineSeparator())"></textarea>
+                            <div class="mt-3">
+                                <label for="respuestas-multiple" class="form-label fw-semibold small text-muted">Respuestas correctas (una por línea)</label>
+                                <textarea id="respuestas-multiple" class="form-control form-control-modern" rows="3"
+                                          placeholder="Opcion 1&#10;Opcion 3"
+                                          th:text="${#lists.isEmpty(preguntaDTO.respuestasCorrectas)} ? '' : #strings.listJoin(preguntaDTO.respuestasCorrectas, T(java.lang.System).lineSeparator())"></textarea>
+                            </div>
+                            <div id="opciones-multiple-hidden"></div>
+                            <div id="respuestas-multiple-hidden"></div>
+                        </div>
+
                         <hr class="my-4" style="border-color:var(--border)"/>
                         <div class="d-flex gap-3 justify-content-end">
-                            <a class="btn btn-ghost px-4" th:href="@{/preguntas}">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                Cancelar
-                            </a>
+                            <a class="btn btn-ghost px-4" th:href="@{/preguntas}">Cancelar</a>
                             <button type="submit" class="btn btn-accent px-4"
                                     th:text="${preguntaDTO.id == null} ? 'Guardar Pregunta' : 'Actualizar Pregunta'">
                                 Guardar
@@ -72,5 +131,6 @@
         </div>
     </div>
 </div>
+<script>actualizarCamposTipo()</script>
 </body>
 </html>

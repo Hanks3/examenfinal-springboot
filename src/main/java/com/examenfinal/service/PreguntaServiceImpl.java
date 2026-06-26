@@ -2,6 +2,9 @@ package com.examenfinal.service;
 
 import com.examenfinal.dto.PreguntaDTO;
 import com.examenfinal.entity.Pregunta;
+import com.examenfinal.entity.PreguntaSeleccionMultiple;
+import com.examenfinal.entity.PreguntaSeleccionUnica;
+import com.examenfinal.entity.PreguntaVerdaderoFalso;
 import com.examenfinal.entity.Tematica;
 import com.examenfinal.exception.PreguntaNoEncontradaException;
 import com.examenfinal.repository.PreguntaRepository;
@@ -73,6 +76,17 @@ public class PreguntaServiceImpl implements PreguntaService {
                 .orElseThrow(() -> new RuntimeException("Tematica no encontrada con id: " + dto.getTematicaId()));
         pregunta.setEnunciado(dto.getEnunciado());
         pregunta.setTematica(tematica);
+
+        if (pregunta instanceof PreguntaVerdaderoFalso vf) {
+            vf.setOpcionCorrecta(dto.getOpcionCorrecta());
+        } else if (pregunta instanceof PreguntaSeleccionUnica su) {
+            su.setOpciones(dto.getOpciones());
+            su.setRespuestaCorrecta(dto.getRespuestaCorrecta());
+        } else if (pregunta instanceof PreguntaSeleccionMultiple sm) {
+            sm.setOpciones(dto.getOpciones());
+            sm.setRespuestasCorrectas(dto.getRespuestasCorrectas());
+        }
+
         pregunta = preguntaRepository.save(pregunta);
         return PreguntaDTO.fromEntity(pregunta);
     }
