@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"
+      th:fragment="layout (titulo, content)">
+<head th:replace="~{fragments/header :: head(titulo=${titulo})}"></head>
+<body>
+    <div th:replace="~{fragments/menu :: navbar}"></div>
+    <main class="container pb-5" th:replace="${content}"></main>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

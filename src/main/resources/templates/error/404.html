@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>404 - Pregunta no encontrada</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <style>
+        .error-body { background: var(--bg-page); display: flex; align-items: center; min-height: 100vh; }
+    </style>
+</head>
+<body class="error-body">
+    <div class="container text-center">
+        <div class="card-modern d-inline-block p-5 mx-auto" style="max-width:480px;">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="mb-3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <h1 class="display-3 fw-bold mb-0" style="color:var(--accent);">404</h1>
+            <h2 class="h4 fw-semibold mt-2 mb-2">Pregunta no encontrada</h2>
+            <p class="text-muted small mb-4" th:text="${error}">Error</p>
+            <a class="btn btn-accent" th:href="@{/preguntas}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Volver al listado
+            </a>
+        </div>
+    </div>
+</body>
+</html>
