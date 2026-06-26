@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="es"
       th:replace="~{fragments/layout :: layout(titulo='Listado de Preguntas', content=~{:: #pagina})}">
 <body>
 <div id="pagina">
@@ -16,7 +18,7 @@
                 <span th:text="${pagina.totalElements}">0</span> preguntas en total
             </p>
         </div>
-        <a class="btn btn-accent" th:href="@{/preguntas/nueva}">
+        <a class="btn btn-accent" th:href="@{/preguntas/nueva}" sec:authorize="hasRole('ADMIN')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="me-1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nueva Pregunta
         </a>
@@ -57,7 +59,7 @@
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="mb-3" style="color:var(--text-muted)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         <p class="h5 fw-semibold mb-1">No hay preguntas registradas</p>
         <p class="small text-muted mb-3">Comienza creando tu primera pregunta.</p>
-        <a class="btn btn-accent" th:href="@{/preguntas/nueva}">
+        <a class="btn btn-accent" th:href="@{/preguntas/nueva}" sec:authorize="hasRole('ADMIN')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="me-1"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Crear Primera Pregunta
         </a>
@@ -92,7 +94,7 @@
                             </div>
                             <p class="mb-0 fw-medium" style="font-size:0.95rem;line-height:1.5;" th:text="${p.enunciado}">Enunciado</p>
                         </div>
-                        <div class="d-flex gap-1 flex-shrink-0">
+                        <div class="d-flex gap-1 flex-shrink-0" sec:authorize="hasRole('ADMIN')">
                             <a class="action-icon btn-ghost" th:href="@{/preguntas/editar/{id}(id=${p.id})}" title="Editar">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             </a>
